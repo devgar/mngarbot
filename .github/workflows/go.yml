@@ -27,6 +27,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          target/release/mngarbot_amd64
+          mngarbot_amd64
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
