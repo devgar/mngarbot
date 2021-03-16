@@ -11,11 +11,16 @@ type Config struct {
 	Token string `yaml:"token"`
 }
 
-func Read() (Config, error) {
+func parseYaml(data []byte) Config {
 	var c Config
+	yaml.Unmarshal(data, &c)
+	return c
+}
+
+func Read() (Config, error) {
 	data, err := ioutil.ReadFile("config.yaml")
 	if err == nil {
-		yaml.Unmarshal(data, &c)
+		return parseYaml(data), nil
 	}
-	return c, err
+	return Config{}, err
 }
