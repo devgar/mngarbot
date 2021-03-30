@@ -36,6 +36,10 @@ func main() {
 		return
 	}
 
+	if c.ID != 0 {
+		b.Send(&tb.User{ID: c.ID}, "Starting MNGRBOT service")
+	}
+
 	b.Handle("/hello", func(m *tb.Message) {
 		log.Printf("[HELLO] USER ID: %d", m.Sender.ID)
 		b.Send(m.Sender, "Hello World!")

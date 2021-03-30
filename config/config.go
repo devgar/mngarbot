@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	Name  string `yaml: name`
 	ID    int    `yaml:"id"`
 	Token string `yaml:"token"`
 }
