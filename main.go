@@ -3,12 +3,20 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"edgarai.com/mngarbot/config"
 
+	_ "github.com/joho/godotenv/autoload"
 	tb "gopkg.in/tucnak/telebot.v2"
 )
+
+var TOKEN string
+
+func init() {
+	TOKEN = os.Getenv("TOKEN")
+}
 
 func main() {
 	c, err := config.Read()
