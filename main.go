@@ -1,14 +1,26 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
-	"edgarai.com/mngarbot/config"
-
+	_ "github.com/joho/godotenv/autoload"
 	tb "gopkg.in/tucnak/telebot.v2"
+
+	"edgarai.com/mngarbot/config"
 )
+
+var TOKEN string
+var message string = ""
+
+func init() {
+	TOKEN = os.Getenv("TOKEN")
+	flag.StringVar(&message, "m", "", "Message to send to admin")
+	flag.Parse()
+}
 
 func main() {
 	c, err := config.Read()
@@ -26,6 +38,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 		return
+	}
+
+	if message != "" {
+		b.Send(&tb.User{ID: c.ID}, message)
+		os.Exit(0)
+	}
+
+	if c.ID != 0 {
+		b.Send(&tb.User{ID: c.ID}, "Starting MNGRBOT service")
 	}
 
 	b.Handle("/hello", func(m *tb.Message) {
