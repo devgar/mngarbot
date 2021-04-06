@@ -2,33 +2,31 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"time"
 
-	_ "github.com/joho/godotenv/autoload"
 	tb "gopkg.in/tucnak/telebot.v2"
 
 	"edgarai.com/mngarbot/config"
 )
 
-var TOKEN string
-var message string = ""
+var (
+	message string = ""
+)
 
 func init() {
-	TOKEN = os.Getenv("TOKEN")
 	flag.StringVar(&message, "m", "", "Message to send to admin")
 	flag.Parse()
 }
 
 func main() {
-	c, err := config.Read()
-	if err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Printf("ADMIN ID: %d\n", c.ID)
-	}
+	c := config.Get()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// } else {
+	// 	fmt.Printf("ADMIN ID: %d\n", c.ID)
+	// }
 	b, err := tb.NewBot(tb.Settings{
 		// URL: "https://telebot.edgarai.com",
 		Token:  c.Token,

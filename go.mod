@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/joho/godotenv v1.3.0
+	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
 	gopkg.in/tucnak/telebot.v2 v2.3.5
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
