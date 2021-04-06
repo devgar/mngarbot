@@ -1,14 +1,12 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/shibukawa/configdir"
 	"gopkg.in/yaml.v3"
 )
 
@@ -20,12 +18,15 @@ var (
 )
 
 func buildRoutes() []string {
-	configdir.New("devgar", pkgName)
 	ways := []string{}
+	if exe, err := os.Executable(); err != nil {
+		dir := path.Dir(exe)
+		pkgName = path.Base(exe)
+		ways = append(ways, path.Join(dir, "config.yaml"))
+	}
 	if cfgDir, err := os.UserConfigDir(); err != nil {
 		ways = append(ways, path.Join(cfgDir, pkgName, "config.yaml"))
 	}
-	ways = append(ways)
 	return ways
 }
 
@@ -56,17 +57,13 @@ func Get() Config {
 func init() {
 	TOKEN := os.Getenv("TOKEN")
 	ADMIN, _ := strconv.Atoi(os.Getenv("ADMIN"))
-	exe, err := os.Executable()
-	dir := path.Dir(exe)
-	name := path.Base(exe)
-	fmt.Println("NAME: ", name)
-	os.Exit(3)
-	if err == nil {
-		ConfigPath = path.Join(dir, "config.yaml")
-	} else {
-		fmt.Println("Can't get executable folder")
+	for _, route := range buildRoutes() {
+		if _, err := os.Stat(route); os.IsExist(err) {
+			ConfigPath = route
+			break
+		}
 	}
-	config, _ := read()
+	config, _ = read()
 	if config.Token == "" {
 		config.Token = TOKEN
 	}
