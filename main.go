@@ -53,7 +53,7 @@ func main() {
 			continue
 		}
 
-		if c.ID == int64(update.Message.From.ID) {
+		if c.ID != int64(update.Message.From.ID) {
 			msg := tb.NewMessage(update.Message.Chat.ID, "I'm not allowed to talk to you")
 			b.Send(msg)
 		}
