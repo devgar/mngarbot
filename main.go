@@ -4,9 +4,8 @@ import (
 	"flag"
 	"log"
 	"os"
-	"time"
 
-	tb "gopkg.in/tucnak/telebot.v2"
+	tb "github.com/go-telegram-bot-api/telegram-bot-api"
 
 	"edgarai.com/mngarbot/config"
 )
@@ -22,35 +21,50 @@ func init() {
 
 func main() {
 	c := config.Get()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	fmt.Printf("ADMIN ID: %d\n", c.ID)
-	// }
-	b, err := tb.NewBot(tb.Settings{
-		// URL: "https://telebot.edgarai.com",
-		Token:  c.Token,
-		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
-	})
+	b, err := tb.NewBotAPI(c.Token)
 
 	if err != nil {
-		log.Fatal(err)
-		return
+		log.Panic(err)
 	}
 
 	if message != "" {
-		b.Send(&tb.User{ID: c.ID}, message)
+		msg := tb.NewMessage(c.ID, message)
+		b.Send(msg)
 		os.Exit(0)
 	}
 
 	if c.ID != 0 {
-		b.Send(&tb.User{ID: c.ID}, "Starting MNGRBOT service")
+		msg := tb.NewMessage(c.ID, "MNGRBOT Started")
+		b.Send(msg)
 	}
 
-	b.Handle("/hello", func(m *tb.Message) {
-		log.Printf("[HELLO] USER ID: %d", m.Sender.ID)
-		b.Send(m.Sender, "Hello World!")
-	})
+	u := tb.NewUpdate(0)
+	u.Timeout = 60
 
-	b.Start()
+	updates, err := b.GetUpdatesChan(u)
+
+	for update := range updates {
+		if update.Message == nil {
+			log.Printf("Ignored empty message")
+		}
+
+		if c.ID == 0 {
+			log.Printf("[Not admin from] %d %s", update.Message.From.ID, update.Message.From.UserName)
+			continue
+		}
+
+		if c.ID == int64(update.Message.From.ID) {
+			msg := tb.NewMessage(update.Message.Chat.ID, "I'm not allowed to talk to you")
+			b.Send(msg)
+		}
+
+		// update
+
+		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+
+		msg := tb.NewMessage(update.Message.Chat.ID, update.Message.Text)
+		msg.ReplyToMessageID = update.Message.MessageID
+
+		b.Send(msg)
+	}
 }

@@ -11,10 +11,10 @@ import (
 )
 
 var (
-	ConfigPath string = "config.yaml"
-	config     Config = Config{}
-	adminErr   error
-	pkgName    string = "mngarbot"
+	config_path string = "config.yaml"
+	config      Config = Config{}
+	adminErr    error
+	pkgName     string = "mngarbot"
 )
 
 func buildRoutes() []string {
@@ -32,7 +32,7 @@ func buildRoutes() []string {
 
 type Config struct {
 	Name  string `yaml:"name"`
-	ID    int    `yaml:"id"`
+	ID    int64  `yaml:"id"`
 	Token string `yaml:"token"`
 }
 
@@ -43,7 +43,7 @@ func parseYaml(data []byte) Config {
 }
 
 func read() (Config, error) {
-	data, err := ioutil.ReadFile(ConfigPath)
+	data, err := ioutil.ReadFile(config_path)
 	if err == nil {
 		return parseYaml(data), nil
 	}
@@ -56,10 +56,10 @@ func Get() Config {
 
 func init() {
 	TOKEN := os.Getenv("TOKEN")
-	ADMIN, _ := strconv.Atoi(os.Getenv("ADMIN"))
+	ADMIN, _ := strconv.ParseInt(os.Getenv("ADMIN"), 10, 64)
 	for _, route := range buildRoutes() {
 		if _, err := os.Stat(route); os.IsExist(err) {
-			ConfigPath = route
+			config_path = route
 			break
 		}
 	}
