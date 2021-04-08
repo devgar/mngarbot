@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -15,40 +14,6 @@ var (
 	chat    int64  = 0
 	message string = ""
 )
-
-func Echo(m tb.Message) tb.MessageConfig {
-	msg := tb.NewMessage(m.Chat.ID, m.Text)
-	msg.ReplyToMessageID = m.MessageID
-	return msg
-}
-
-func logMsgData(m tb.Message) {
-	mFromID := ""
-	mFromName := ""
-	mType := "Chat"
-	if m.From != nil {
-		mFromID = fmt.Sprintf("%d", m.From.ID)
-		mFromName = m.From.UserName
-	}
-	if m.Chat.IsChannel() {
-		mType = "Channel"
-	}
-	if m.Chat.IsGroup() {
-		mType = "Group"
-	}
-	if m.Chat.IsSuperGroup() {
-		mType = "SuperGroup"
-	}
-	log.Printf(
-		"(%s)\n#%s [%s]\n#%d [%s]\n  %s",
-		mType,
-		mFromID,
-		mFromName,
-		m.Chat.ID,
-		m.Chat.Title,
-		m.Text,
-	)
-}
 
 func init() {
 	flag.Int64Var(&chat, "c", 0, "Chat to send a message")
