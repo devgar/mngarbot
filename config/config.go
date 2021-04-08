@@ -19,12 +19,12 @@ var (
 
 func buildRoutes() []string {
 	ways := []string{}
-	if exe, err := os.Executable(); err != nil {
+	if exe, err := os.Executable(); err == nil {
 		dir := path.Dir(exe)
 		pkgName = path.Base(exe)
 		ways = append(ways, path.Join(dir, "config.yaml"))
 	}
-	if cfgDir, err := os.UserConfigDir(); err != nil {
+	if cfgDir, err := os.UserConfigDir(); err == nil {
 		ways = append(ways, path.Join(cfgDir, pkgName, "config.yaml"))
 	}
 	return ways
