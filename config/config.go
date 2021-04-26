@@ -18,16 +18,16 @@ var (
 )
 
 func buildRoutes() []string {
-	ways := []string{}
+	places := []string{}
 	if exe, err := os.Executable(); err == nil {
 		dir := path.Dir(exe)
 		pkgName = path.Base(exe)
-		ways = append(ways, path.Join(dir, "config.yaml"))
+		places = append(places, path.Join(dir, "config.yaml"))
 	}
 	if cfgDir, err := os.UserConfigDir(); err == nil {
-		ways = append(ways, path.Join(cfgDir, pkgName, "config.yaml"))
+		places = append(places, path.Join(cfgDir, pkgName, "config.yaml"))
 	}
-	return ways
+	return places
 }
 
 type Config struct {
@@ -58,7 +58,7 @@ func init() {
 	TOKEN := os.Getenv("TOKEN")
 	ADMIN, _ := strconv.ParseInt(os.Getenv("ADMIN"), 10, 64)
 	for _, route := range buildRoutes() {
-		if _, err := os.Stat(route); os.IsExist(err) {
+		if _, err := os.Stat(route); err == nil {
 			config_path = route
 			break
 		}
